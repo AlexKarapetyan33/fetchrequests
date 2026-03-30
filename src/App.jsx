@@ -33,9 +33,28 @@ export function App() {
   const removeTodo = (id) => {
       fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
         method : 'DELETE'
+      }).then((res) => {
+        setTodos(todos.filter((todo) => todo.id !== id))
       })
   }
 
+  const updateTodo = (id, completed) => {
+    fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+      method : 'PATCH',
+      headers : {'content-type' : 'application/json'},
+      body : JSON.stringify({completed : !completed})
+    }).then((res) => res.json())
+    .then((res) => {
+      setTodos(todos.map((todo) => {
+        if(todo.id === id){
+          return {...res}
+        }else{
+          return todo
+        }
+      }))
+    })
+  }
+  
   return (
     <>
       <input value={title} onChange={changeTitle} />
@@ -47,6 +66,7 @@ export function App() {
             return (
               <li key={todo.id}>
                 <b>{todo.id}</b>
+                <input type={"checkbox"} checked={todo.completed} onChange={() => updateTodo(todo.id, todo.completed)} />
                 <span>{todo.title}</span>
                 <button onClick={() => removeTodo(todo.id)}>X</button>
               </li>
@@ -58,4 +78,3 @@ export function App() {
     </>
   )
 }
-
