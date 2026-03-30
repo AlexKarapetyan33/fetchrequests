@@ -6,11 +6,12 @@ export function App() {
 
   const [title, setTitle] = useState('')
   const [todos, setTodos] = useState([])
+  const [page, setPage] = useState(1)
   useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/todos?_limit=20')
+    fetch(`https://jsonplaceholder.typicode.com/todos?_limit=20&_page=${page}`)
       .then((res) => res.json())
       .then((res) => setTodos(res))
-  }, [])
+  }, [page])
 
   const changeTitle = (e) => {
     setTitle(e.target.value)
@@ -55,11 +56,29 @@ export function App() {
     })
   }
   
+const datatLength = 200
+let pageCount = Math.ceil(datatLength / 20)
+let arr = []
+
+for(let i = 1; i <= pageCount; i++){
+  arr.push(i)
+}
+
+
+const newPage = (p) => {
+  setPage(p)
+}
+
   return (
     <>
       <input value={title} onChange={changeTitle} />
       <button onClick={addTodo}>Add</button>
-
+      {
+        arr.map((el) => {
+          return <button onClick={() => newPage(el)}
+           key={el}>{el}</button>
+        })
+      }
       <ul>
         {
           todos.map((todo) => {
